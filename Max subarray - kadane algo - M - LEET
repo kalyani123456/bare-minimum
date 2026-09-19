@@ -1,0 +1,50 @@
+Given an integer array nums, find the subarray with the largest sum, and return its sum.
+Example 1:
+
+Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+Output: 6
+Explanation: The subarray [4,-1,2,1] has the largest sum 6.
+
+Kadane’s Algorithm, which behaves somewhat like a variable-size sliding window.
+Idea :
+For each element, decide:
+Should I extend the current subarray, or start a new subarray here?
+
+current window
+      ↓
+is previous sum useful?
+   /          \
+ yes           no
+  ↓             ↓
+extend       restart
+
+Example
+
+nums = [-2,1,-3,4,-1,2,1,-5,4]
+
+As we scan:
+
+-2 → curr = -2
+ 1 → curr =  1    ← start new subarray
+-3 → curr = -2
+ 4 → curr =  4    ← start new subarray
+-1 → curr =  3
+ 2 → curr =  5
+ 1 → curr =  6
+-5 → curr =  1
+ 4 → curr =  5
+
+Maximum = 6, from:
+
+[4, -1, 2, 1]
+
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int currentSum = nums[0], maxSum = nums[0];
+        for(int i=0;i<nums.length;i++){
+          currentSum = Math.max(nums[i], currentSum + nums[i]);
+          maxSum = Math.max(currentSum, maxSum);
+        }
+        return maxSum;
+    }
+}
