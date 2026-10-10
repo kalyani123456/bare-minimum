@@ -1,0 +1,188 @@
+2965. Find Missing and Repeated Values
+Solved
+Easy
+Topics
+premium lock icon
+Companies
+You are given a 0-indexed 2D integer matrix grid of size n * n with values in the range [1, n2]. Each integer appears exactly once except a which appears twice and b which is missing. The task is to find the repeating and missing numbers a and b.
+
+Return a 0-indexed integer array ans of size 2 where ans[0] equals to a and ans[1] equals to b.
+
+ 
+
+Example 1:
+
+Input: grid = [[1,3],[2,2]]
+Output: [2,4]
+Explanation: Number 2 is repeated and number 4 is missing so the answer is [2,4].
+Example 2:
+
+Input: grid = [[9,1,7],[8,9,2],[3,4,6]]
+Output: [9,5]
+Explanation: Number 9 is repeated and number 5 is missing so the answer is [9,5].
+
+We can use freq map to get the freq of num
+if freq is 2 then its repeat
+if freq is 0 then its missing
+
+as they are sequencial natural numbers
+but it will have O(n2) time complexity and space O(n2)
+
+class Solution {
+    public int[] findMissingAndRepeatedValues(int[][] grid) {
+        int n = grid.length;
+        int[] freq = new int[n*n+1];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                freq[grid[i][j]]++;
+            }
+        }
+        int rept = -1, mis = -1;
+        for(int i=1;i<freq.length;i++){
+            if(freq[i]==2){
+            rept = i;
+            }
+            if(freq[i]==0){
+            mis = i;
+            }
+        }
+        return new int[]{rept,mis};
+    }
+}
+
+for space to be O(1)
+
+class Solution {
+    public int[] findMissingAndRepeatedValues(int[][] grid) {
+        long n = grid.length;
+        long N = n * n;
+
+        long expectedSum = N * (N + 1) / 2;
+        long expectedSqSum = N * (N + 1) * (2 * N + 1) / 6;
+
+        long actualSum = 0;
+        long actualSqSum = 0;
+
+        for (int[] row : grid) {
+            for (int num : row) {
+                actualSum += num;
+                actualSqSum += (long) num * num;
+            }
+        }
+
+        // a - b
+        long diff = actualSum - expectedSum;
+
+        // a^2 - b^2
+        long sqDiff = actualSqSum - expectedSqSum;
+
+        // a + b = (a^2 - b^2) / (a - b)
+        long sum = sqDiff / diff;
+
+        int repeated = (int) ((diff + sum) / 2);
+        int missing = (int) (sum - repeated);
+
+        return new int[]{repeated, missing};
+    }
+}
+
+LeetCode 2965: Find Missing and Repeated Values — O(1) Extra Space
+Approach: Mathematics
+The main idea is to use mathematics instead of a frequency array or HashMap. We can find the repeated and missing numbers using the sum of numbers and the sum of their squares.
+1. Understand the Example
+Suppose:
+grid = [[1, 3],
+        [2, 2]]
+The numbers should be 1, 2, 3, 4, but 2 appears twice and 4 is missing.
+* Repeated number: a = 2
+* Missing number: b = 4
+We want to find a and b without creating an extra array or map.
+2. The Mathematical Idea
+For numbers from 1 to N, where N = n * n, we know:
+Formula 1: Expected Sum
+S = N(N + 1) / 2
+
+For our example, N = 4:
+S = 4(5) / 2 = 10
+
+But the actual grid sum is:
+Actual Sum = 1 + 3 + 2 + 2 = 8
+Therefore:
+Actual Sum - Expected Sum = a - b
+a - b = 8 - 10 = -2
+
+Our first equation is:
+a - b = -2
+
+Formula 2: Expected Sum of Squares
+P = N(N + 1)(2N + 1) / 6
+For the numbers 1, 2, 3, 4:
+P = 1² + 2² + 3² + 4² = 30
+
+The actual sum of squares is:
+Actual Square Sum = 1² + 3² + 2² + 2² = 18
+
+Therefore:
+Actual Square Sum - Expected Square Sum = a² - b²
+a² - b² = 18 - 30 = -12
+Since the difference of squares can be factored:
+a² - b² = (a - b)(a + b)
+Substituting a - b = -2:
+-2(a + b) = -12
+a + b = 6
+
+Our second equation is:
+a + b = 6
+
+3. Find the Repeated and Missing Numbers
+We now have two equations:
+a - b = -2
+a + b = 6
+Adding both equations:
+2a = 4
+a = 2
+Substitute a = 2 into a + b = 6:
+2 + b = 6
+b = 4
+Therefore, the answer is:
+[2, 4]
+* ans[0] = 2 (repeated number)
+* ans[1] = 4 (missing number)
+4. Java Solution
+class Solution {
+    public int[] findMissingAndRepeatedValues(int[][] grid) {
+        long n = grid.length;
+        long N = n * n;
+
+        long expectedSum = N * (N + 1) / 2;
+        long expectedSqSum = N * (N + 1) * (2 * N + 1) / 6;
+
+        long actualSum = 0;
+        long actualSqSum = 0;
+
+        for (int[] row : grid) {
+            for (int num : row) {
+                actualSum += num;
+                actualSqSum += (long) num * num;
+            }
+        }
+
+        // a - b
+        long diff = actualSum - expectedSum;
+
+        // a^2 - b^2
+        long sqDiff = actualSqSum - expectedSqSum;
+
+        // a + b = (a^2 - b^2) / (a - b)
+        long sum = sqDiff / diff;
+
+        int repeated = (int) ((diff + sum) / 2);
+        int missing = (int) (sum - repeated);
+
+        return new int[]{repeated, missing};
+    }
+}
+5. Complexity Analysis
+* Time Complexity: O(n²) because we visit every element of the grid.
+* Auxiliary Space Complexity: O(1) because we use only a fixed number of variables and no extra array or HashMap.
+Note: The returned array of size 2 is required output and is not counted as auxiliary space. The mathematical approach also assumes exactly one repeated number and one missing number.
