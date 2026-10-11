@@ -1,0 +1,444 @@
+442. Find All Duplicates in an Array
+Solved
+Medium
+Topics
+premium lock icon
+Companies
+Given an integer array nums of length n where all the integers of nums are in the range [1, n] and each integer appears at most twice, return an array of all the integers that appears twice.
+
+You must write an algorithm that runs in O(n) time and uses only constant auxiliary space, excluding the space needed to store the output
+
+ 
+
+Example 1:
+
+Input: nums = [4,3,2,7,8,2,3,1]
+Output: [2,3]
+Example 2:
+
+Input: nums = [1,1,2]
+Output: [1]
+Example 3:
+
+Input: nums = [1]
+Output: []
+
+so space needs constant O(1).
+
+so we will edit in existing array like freq array kind of
+but in case increment the index = nums[i]
+we will store negative values so we know its was alreayd visited
+
+
+Let's do a complete dry run, step by step, of the optimized solution for LeetCode 442: Find All Duplicates in an Array.
+
+## Code we're dry-running
+
+```
+class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+        List<Integer> resList = new ArrayList<>();
+
+        for (int i = 0; i < nums.length; i++) {
+            int index = Math.abs(nums[i]) - 1; 
+//Why subtract `1`? Because the numbers range from `1` to `n`, while array indices range from `0` to `n - 1`.
+            if (nums[index] < 0) {
+                resList.add(Math.abs(nums[i]));
+            } else {
+                nums[index] = -nums[index];
+            }
+        }
+
+        return resList;
+    }
+}
+```
+
+## 1. Initial state
+
+Input:
+
+`nums = [4, 3, 2, 7, 8, 2, 3, 1]`
+
+Initially:
+
+- `resList = []`
+- Array indices go from `0` to `7`.
+- The value `x` corresponds to index `x - 1`.
+- A negative value at an index means that the corresponding number has already been visited.
+
+## 2. Full dry run
+
+The array changes in place as the algorithm runs.
+
+Step 1 — i = 0
+
+Number = 4
+
+`nums[0] = 4`
+
+Calculate the index:
+
+`index = Math.abs(4) - 1 = 3`
+
+Check `nums[3]`, which is `7`.
+
+Since `7 > 0`, mark it negative:
+
+`nums[3] = -7`
+
+4
+
+0
+
+3
+
+1
+
+2
+
+2
+
+-7
+
+3
+
+8
+
+4
+
+2
+
+5
+
+3
+
+6
+
+1
+
+7
+
+`resList = []`
+
+Step 2 — i = 1
+
+Number = 3
+
+`nums[1] = 3`
+
+`index = Math.abs(3) - 1 = 2`
+
+Check `nums[2] = 2`. It is positive, so mark it negative.
+
+`nums[2] = -2`
+
+4
+
+0
+
+3
+
+1
+
+-2
+
+2
+
+-7
+
+3
+
+8
+
+4
+
+2
+
+5
+
+3
+
+6
+
+1
+
+7
+
+`resList = []`
+
+Step 3 — i = 2
+
+Number = 2
+
+`nums[2] = -2`
+
+`index = Math.abs(-2) - 1 = 1`
+
+Check `nums[1] = 3`. It is positive, so mark it negative.
+
+`nums[1] = -3`
+
+4
+
+0
+
+-3
+
+1
+
+-2
+
+2
+
+-7
+
+3
+
+8
+
+4
+
+2
+
+5
+
+3
+
+6
+
+1
+
+7
+
+`resList = []`
+
+Important: `nums[i]` itself can be negative because an earlier step may have marked it. That's why we use `Math.abs()`.
+
+Step 4 — i = 3
+
+Number = 7
+
+`nums[3] = -7`
+
+`index = Math.abs(-7) - 1 = 6`
+
+Check `nums[6] = 3`. It is positive, so mark it negative.
+
+`nums[6] = -3`
+
+4
+
+0
+
+-3
+
+1
+
+-2
+
+2
+
+-7
+
+3
+
+8
+
+4
+
+2
+
+5
+
+-3
+
+6
+
+1
+
+7
+
+`resList = []`
+
+Step 5 — i = 4
+
+Number = 8
+
+`nums[4] = 8`
+
+`index = Math.abs(8) - 1 = 7`
+
+Check `nums[7] = 1`. It is positive, so mark it negative.
+
+`nums[7] = -1`
+
+4
+
+0
+
+-3
+
+1
+
+-2
+
+2
+
+-7
+
+3
+
+8
+
+4
+
+2
+
+5
+
+-3
+
+6
+
+-1
+
+7
+
+`resList = []`
+
+Step 6 — i = 5
+
+Duplicate found: 2
+
+`nums[5] = 2`
+
+`index = Math.abs(2) - 1 = 1`
+
+Check `nums[1] = -3`.
+
+Since `nums[index] < 0`, index `1` has already been marked. This means number `2` has appeared before.
+
+Add `Math.abs(nums[5]) = 2` to the result.
+
+Array stays unchanged
+
+[4, -3, -2, -7, 8, 2, -3, -1]
+
+Result
+
+## [2]
+
+Step 7 — i = 6
+
+Duplicate found: 3
+
+`nums[6] = -3`
+
+`index = Math.abs(-3) - 1 = 2`
+
+Check `nums[2] = -2`.
+
+Since `nums[2] < 0`, number `3` has already appeared before.
+
+Add `Math.abs(nums[6]) = 3` to the result.
+
+Array stays unchanged
+
+[4, -3, -2, -7, 8, 2, -3, -1]
+
+Result
+
+## [2, 3]
+
+Step 8 — i = 7
+
+Number = 1
+
+`nums[7] = -1`
+
+`index = Math.abs(-1) - 1 = 0`
+
+Check `nums[0] = 4`. It is positive, so mark it negative.
+
+`nums[0] = -4`
+
+-4
+
+0
+
+-3
+
+1
+
+-2
+
+2
+
+-7
+
+3
+
+8
+
+4
+
+2
+
+5
+
+-3
+
+6
+
+-1
+
+7
+
+`resList = [2, 3]`
+
+## 3. Summary table
+
+| `i` | `nums[i]` | Calculated index | `nums[index]` before check | Action            |
+| --- | --------- | ---------------- | -------------------------- | ----------------- |
+| 0   | 4         | 3                | 7                          | Mark `7` negative |
+| 1   | 3         | 2                | 2                          | Mark `2` negative |
+| 2   | -2        | 1                | 3                          | Mark `3` negative |
+| 3   | -7        | 6                | 3                          | Mark `3` negative |
+| 4   | 8         | 7                | 1                          | Mark `1` negative |
+| 5   | 2         | 1                | -3                         | Add `2`           |
+| 6   | -3        | 2                | -2                         | Add `3`           |
+| 7   | -1        | 0                | 4                          | Mark `4` negative |
+
+Final result:
+
+```
+[2, 3]
+```
+
+Final modified input array:
+
+```
+[-4, -3, -2, -7, 8, 2, -3, -1]
+```
+
+## 4. The key idea to remember
+
+The most important line is:
+
+```
+int index = Math.abs(nums[i]) - 1;
+```
+
+Why subtract `1`? Because the numbers range from `1` to `n`, while array indices range from `0` to `n - 1`.
+
+And this condition identifies duplicates:
+
+```
+if (nums[index] < 0)
+```
+
+- Positive: this number hasn't been marked yet.
+- Negative: this number has already been encountered, so you've found a duplicate.
+
+This gives you \\(O(n)\\) time and \\(O(1)\\) auxiliary space, excluding the output list.
