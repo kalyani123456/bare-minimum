@@ -1,0 +1,35 @@
+Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+Example 1:
+1->2->3->4->5---null
+5->4->3->2->1---null
+
+there will be 
+pre = null for 1->null
+and next = curr.next
+curr = 1
+next = 2
+
+we are fliping
+1->2  t0 null<-1->2
+
+now you have flipped
+current.next to pre
+now update as we move to next node
+pre will be current - prev = curr
+curr will be the next coming node - curr = next
+
+class Solution {
+    public ListNode reverseList(ListNode head) {
+        if(head == null) return head;//1,2,3,4,5
+        ListNode current = head;
+        ListNode prev = null; //previous to reverse -> last one will be null
+        while(current!=null){ 
+        ListNode next = current.next; //2//3//4//5//null
+        current.next = prev; //1->null//2->1//3->2//4->3//5->4
+        prev = current; //1//2//3//4//5
+        current = next; //2//3//4//5//null
+        }
+        return prev;
+    }
+}
