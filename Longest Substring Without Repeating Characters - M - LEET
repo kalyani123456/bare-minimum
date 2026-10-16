@@ -1,0 +1,106 @@
+3. Longest Substring Without Repeating Characters
+Medium
+Topics
+premium lock icon
+Companies
+Hint
+Given a string s, find the length of the longest substring without duplicate characters.
+
+Example 1:
+
+Input: s = "abcabcbb"
+Output: 3
+Explanation: The answer is "abc", with the length of 3. Note that "bca" and "cab" are also correct answers.
+Example 2:
+
+Input: s = "bbbbb"
+Output: 1
+Explanation: The answer is "b", with the length of 1.
+Example 3:
+
+Input: s = "pwwkew"
+Output: 3
+Explanation: The answer is "wke", with the length of 3.
+Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
+
+using hashset
+2 loops for i init map to reset every iternation and for j do below stuff
+find if char exits 
+if yes then break
+else add to set
+len = j-1 + 1
+max = max (len , max)
+
+
+import java.util.HashSet;
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int n = s.length();
+        int maxLen = 0;
+
+        for (int i = 0; i < n; i++) {
+            HashSet<Character> set = new HashSet<>();
+
+            for (int j = i; j < n; j++) {
+
+                if (set.contains(s.charAt(j))) {
+                    break;
+                } else {
+                    set.add(s.charAt(j));
+                }
+
+                int len = j - i + 1;
+                maxLen = Math.max(maxLen, len);
+            }
+        }
+
+        return maxLen;
+    }
+}
+Approach	Time	Space
+Your 2 for loops + HashSet	\(O(n^2)\)	\(O(\min(n,k))\)
+
+optimised approach:
+
+use hashmap save char and ine in map
+two pointers l = 0 and r = 0 moving loop
+a->0
+b->1
+c->2
+
+next is a 
+so a alreayd in map
+l = max (l, index of a + 1 means next char will be start point of next sequnce)
+
+max = (max , r-l+1)
+
+Complete dry run table
+r	ch l str maxLen
+0	a	0	"a"	  1
+1	b	0	"ab"	2
+2	c	0	"abc"	3
+3	a	1	"bca"	3
+4	b	2	"cab"	3
+5	c	3	"abc"	3
+6	b	5	"cb"	3
+7	b	7	"b"	  3
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        HashMap<Character,Integer> map = new HashMap<>();
+        int n = s.length();
+        int l = 0;
+        int maxLen = 0;
+        for(int r=0;r<n;r++){
+            char c = s.charAt(r);
+            if(map.containsKey(c)){
+            l = Math.max(l,map.getOrDefault(c,0)+1);
+            }
+            //add to map
+            map.put(c,r);
+            maxLen = Math.max(maxLen, r-l+1);
+        }
+        return maxLen;
+    }
+}
