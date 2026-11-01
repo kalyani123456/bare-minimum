@@ -1,0 +1,119 @@
+Input: root = [3,9,20,null,null,15,7]
+Output: [[3],[9,20],[15,7]]
+
+You can traverse a binary tree using **DFS** (go deep along branches) or **BFS** (visit level by level).
+
+For this tree:
+
+```text
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+| Traversal | Visit order | Output |
+|---|---|---|
+| Preorder | Root → Left → Right | `1 2 4 5 3` |
+| Inorder | Left → Root → Right | `4 2 5 1 3` |
+| Postorder | Left → Right → Root | `4 5 2 3 1` |
+| Level order | Level by level | `1 2 3 4 5` |
+
+The first three use recursion. **Where you process the current node determines the traversal.**
+
+```java
+void preorder(TreeNode root) {
+    if (root == null) return;
+
+    System.out.println(root.val);
+    preorder(root.left);
+    preorder(root.right);
+}
+
+void inorder(TreeNode root) {
+    if (root == null) return;
+
+    inorder(root.left);
+    System.out.println(root.val);
+    inorder(root.right);
+}
+
+void postorder(TreeNode root) {
+    if (root == null) return;
+
+    postorder(root.left);
+    postorder(root.right);
+    System.out.println(root.val);
+}
+```
+
+Level order uses a **queue**:
+
+```java
+void levelOrder(TreeNode root) {
+    if (root == null) return;
+
+    Queue<TreeNode> queue = new ArrayDeque<>();
+    queue.offer(root);
+
+    while (!queue.isEmpty()) {
+        TreeNode node = queue.poll();
+        System.out.println(node.val);
+
+        if (node.left != null) queue.offer(node.left);
+        if (node.right != null) queue.offer(node.right);
+    }
+}
+```
+
+All take **O(n) time**, since every node is visited once. Recursive DFS uses **O(h)** extra space for tree height `h`; BFS uses **O(w)** for maximum level width `w`.
+
+Yes—each inner list should contain **one level**. Use an inner loop to process all nodes at that level:
+
+```java
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<>();
+        if (root == null) return result;
+
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            List<Integer> level = new ArrayList<>();
+
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode node = queue.poll();
+                level.add(node.val);
+
+                if (node.left != null) queue.offer(node.left);
+                if (node.right != null) queue.offer(node.right);
+            }
+
+            result.add(level);
+        }
+
+        return result;
+    }
+}
+```
+
+For your input:
+
+```text
+       3
+      / \
+     9  20
+       /  \
+      15   7
+```
+
+| While iteration | `levelSize` | List added | Queue afterward |
+|---|---|---|---|
+| 1 | 1 | `[3]` | `[9, 20]` |
+| 2 | 2 | `[9, 20]` | `[15, 7]` |
+| 3 | 2 | `[15, 7]` | `[]` |
+
+Result: **`[[3], [9,20], [15,7]]`**.
